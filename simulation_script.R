@@ -43,8 +43,9 @@ varDist
 #### Tooth Growth
 
 data("ToothGrowth")
-
 str(ToothGrowth)
+
+help(ToothGrowth)
 
 ggplot(ToothGrowth) +
     geom_boxplot(aes(x = as.factor(dose), y = len, fill = as.factor(dose))) +
@@ -69,15 +70,29 @@ ggplot(ToothGrowth) +
 
 suppByDose <- split(ToothGrowth, list(ToothGrowth$supp, as.factor(ToothGrowth$dose)))
 sapply(suppByDose, function(x) mean(x[,1]))
+sapply(suppByDose, function(x) length(x[,1]))
+groupVars <- sapply(suppByDose, function(x) var(x[,1]))
+max(groupVars)/min(groupVars)
 
+library(car)
+leveneTest(ToothGrowth$len ~ as.factor(ToothGrowth$dose)*ToothGrowth$supp,
+           center = median)
+leveneTest(ToothGrowth$len ~ as.factor(ToothGrowth$dose),
+           center = median)
 
 byDose <- split(ToothGrowth, ToothGrowth$dose)
 byDose
+sapply(byDose, function(x) var(x[,1]))
+sapply(byDose, function(x) length(x[,1]))
 t.test(byDose[2][[1]][1], byDose[3][[1]][1],
        alternative = "two.sided", paired = FALSE, var.equal = TRUE)
 
+
+leveneTest(ToothGrowth$len ~ as.factor(ToothGrowth$supp),
+           center = median)
+
 bySupp <- split(ToothGrowth, ToothGrowth$supp)
 bySupp
-
+sapply(bySupp, function(x) var(x[,1]))
 t.test(bySupp[1][[1]][1], byDose[1][[1]][1],
        alternative = "greater", paired = FALSE, var.equal = TRUE)
