@@ -1,0 +1,77 @@
+---
+title: "Statistical Inference Simulation Project"
+author: "Anton Hesse"
+date: "9/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Exponential Simulation
+
+We will simulate random exponential distributions in R and compare our results to the central limit theorum. We begin by loading the ggplot2 package.
+
+```{r load_packages, message = FALSE}
+library(ggplot2)
+```
+
+Next we will define our variables. We will have distributions of averages of 40 random exponentials. Our rate parameter, lambda, will be set to 0.2 and we will repeat this simulation 1000 times.
+
+```{r set_values}
+N <- 40 # number of averages
+lambda <- 0.2 # rate parameter
+nSims <- 1000
+```
+
+Next we will simulate our data with the replicate function.
+```{r simulation_data}
+set.seed(5730)
+simData <- replicate(nSims, rexp(n = N, rate = lambda))
+head(simData[,1:5])
+```
+
+We we now calculate the mean and variance of each of the 1000 replicates of 40 samples.
+
+``` {r apply}
+means <- apply(simData, MARGIN = 2, FUN = mean)
+head(means)
+vars <- apply(simData, MARGIN = 2, FUN = var)
+head(vars)
+```
+
+Prior to plotting our results, we will calculate the true mean and variance for our chosen value of lambda.
+
+``` {r true_vals}
+truMean <- 1/lambda
+truSD <- 1/lambda
+truVar <- truSD^2
+```
+
+We can now compare our sampling distributions of the means and variance with the true values. We will create density plots and add a vertical line that indicates the true mean and variance values.
+
+``` {r meanDist}
+meanDist <- ggplot(data = as.data.frame(means)) +
+    geom_density(aes(x = means)) +
+    geom_vline(xintercept = truMean, color = "red") +
+    ggtitle("Distribution of 40 Sample Means with 1000 Replications") +
+    annotate("text", x = 7, y = 0.35, label = "True mean = 5", color = "red")
+meanDist
+```
+
+The mean of the mean sampling distribution for our simulation of `r round(mean(means),3)` was very similar to the true mean value of `r 1/lambda`. This density plot has a characteristic bell shape.
+
+``` {r mvarDist}
+varDist <- ggplot(data = as.data.frame(vars)) +
+    geom_density(aes(x = vars)) +
+    geom_vline(xintercept = truVar, color = "green") +
+    ggtitle("Distribution of 40 Sample Variances with 1000 Replications") +
+    annotate("text", x = 50, y = 0.0325, label = "True variance = 25", color = "green")
+varDist
+```
+
+The mean variance of the variance sampling distribution simulation of `r round(mean(vars),3)` was very similar to the true mean variance of `r truVar`. This density plot has a characteristic bell shape. However, in comparison to the mean density plot, this is somewhat right skewed given that these values are squares. Although this skewness makes it somewhat less bell shaped than the means plot, it still is bell shaped.
+
+
+### Basic Tooth Growth Inference
