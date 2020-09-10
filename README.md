@@ -1,1 +1,1 @@
-# statistica-inference
+# statistical-inference

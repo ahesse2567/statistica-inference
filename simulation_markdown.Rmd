@@ -2,7 +2,9 @@
 title: "Statistical Inference Simulation Project"
 author: "Anton Hesse"
 date: "9/10/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -72,80 +74,3 @@ varDist
 ```
 
 The mean variance of the variance sampling distribution simulation of `r round(mean(vars),3)` was very similar to the true mean variance of `r truVar`. This density plot has a characteristic bell shape. However, in comparison to the mean density plot, this is somewhat right skewed given that these values are squares. Although this skewness makes it somewhat less bell shaped than the means plot, it still is bell shaped.
-
-
-### Basic Tooth Growth Inference
-
-We will begin this data analysis by loading the data and looking at its structure.
-
-``` {r load_tooth}
-data("ToothGrowth")
-str(ToothGrowth)
-```
-
-Next we will read about the data with the help() function.
-
-```{r tooth_help}
-help(ToothGrowth)
-```
-
-The description tells us that there were 3 dosages of vitamin C in two different supplement forms. Thus, we will examine our data by considering dose as a factor. We will first examine tooth growth vs. dosage.
-
-``` {r tooth_dosage}
-ggplot(ToothGrowth) +
-    geom_boxplot(aes(x = as.factor(dose), y = len, fill = as.factor(dose))) +
-    ggtitle( "Tooth Length by Dosage") +
-    xlab("Dosage") +
-    ylab("Odontoblast Length") +
-    labs(fill = "Doseage")
-```
-
-Visual assessment suggests that all three groups have different means. Now we will assess the supplementation method.
-
-```{r tooth_supp}
-ggplot(ToothGrowth) +
-    geom_boxplot(aes(x = supp, y = len, fill = supp)) +
-    ggtitle( "Tooth Length by Supplement Type") +
-    xlab("Supplement Type") +
-    ylab("Odontoblast Length") +
-    labs(fill = "Supplement\n Type")
-```
-
-The difference between tooth growth by supplementation type do not appear as stark as compared to dosage, but direct vitamin C supplementation may result in lower tooth growth.
-
-For simplicity, we will only examine two of the dosages against each other. We will compare the 1 and 2 mg/day with an independent t-test because those are closer together and thus harder to tell if there is a difference between them.
-
-We will use an independent t-test because separate guinea pigs received different doses. We will also assume that each group equal variance. We can compute the variance for each group as follows:
-
-```{r supp_vars}
-sapply(byDose, function(x) var(x[,1]))
-```
-
-Although they aren't exactly the same, this is a balanced design because the number of subjects in each group are:
-
-```{r supp_length}
-sapply(byDose, function(x) length(x[,1]))
-```
-
-Therefore, we have some robustness against heterogeneity of variance. Our final assumption is that our sample size is sufficiently large for the central limit theorum to apply. The general rule of thum is that at least 30 observations is required, and we have 1000.
-
-```{r split_t-test_dose}
-byDose <- split(ToothGrowth, ToothGrowth$dose)
-byDose
-t.test(byDose[2][[1]][1], byDose[3][[1]][1],
-       alternative = "two.sided", paired = FALSE, var.equal = TRUE)
-```
-
-This shows we have sufficient evidence to reject the null hypothesis (p < 0.001) that there is no difference between the 1 mg/day and 2mg/day doses. Furthermore, we are 95% confident that the true mean difference between the 1 and 2 mg/day doses lies between 19.74 and 26.10.
-
-
-We will now test the difference between the two supplementation methods. We will make the same assumptions regarding equal variance between groups and normality.
-
-```{r t-test_supp}
-bySupp <- split(ToothGrowth, ToothGrowth$supp)
-bySupp
-t.test(bySupp[1][[1]][1], byDose[1][[1]][1],
-       alternative = "greater", paired = FALSE, var.equal = TRUE)
-```
-
-We have sufficient evidence to reject the null hypothesis (p < 0.001) that there is no difference in tooth growth length between the vitamin C and ascorbic acid supplementation methods. We are also 95% confident that the true mean difference between these two groups is between 20.66 and 10.61.
