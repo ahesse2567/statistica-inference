@@ -94,5 +94,8 @@ leveneTest(ToothGrowth$len ~ as.factor(ToothGrowth$supp),
 bySupp <- split(ToothGrowth, ToothGrowth$supp)
 bySupp
 sapply(bySupp, function(x) var(x[,1]))
-t.test(bySupp[1][[1]][1], byDose[1][[1]][1],
+t.test(bySupp[1][[1]][1], bySupp[2][[1]][1],
        alternative = "greater", paired = FALSE, var.equal = TRUE)
+
+
+t.test(len ~ supp, data = ToothGrowth, var.equal = TRUE, paired = FALSE)

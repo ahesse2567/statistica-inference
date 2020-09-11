@@ -26,7 +26,7 @@ Next we will read about the data with the help() function.
 help(ToothGrowth)
 ```
 
-The description tells us that there were 3 dosages of vitamin C in two different supplement forms. Thus, we will examine our data by considering dose as a factor. We will first examine tooth growth vs. dosage.
+The description tells us that there were 3 dosages of vitamin C in two different supplement forms. The effects of these variables were applied to the tooth length of guinea pigs. Thus, we will examine our data by considering dose as a factor. We will first examine tooth growth vs. dosage.
 
 ``` {r tooth_dosage}
 ggplot(ToothGrowth) +
@@ -69,7 +69,7 @@ Therefore, we have some robustness against heterogeneity of variance. Our final 
 
 ```{r split_t-test_dose}
 t.test(byDose[2][[1]][1], byDose[3][[1]][1],
-       alternative = "less", paired = FALSE, var.equal = TRUE)
+       alternative = "two.sided", paired = FALSE, var.equal = TRUE)
 ```
 
 This shows we have sufficient evidence to reject the null hypothesis (p < 0.001) that there is no difference between the 1 mg/day and 2mg/day doses. Furthermore, we are 95% confident that the true mean difference between the 1 and 2 mg/day doses lies between 19.74 and 26.10.
@@ -79,8 +79,8 @@ We will now test the difference between the two supplementation methods. We will
 
 ```{r t-test_supp}
 bySupp <- split(ToothGrowth, ToothGrowth$supp)
-t.test(bySupp[1][[1]][1], byDose[1][[1]][1],
-       alternative = "greater", paired = FALSE, var.equal = TRUE)
+t.test(bySupp[1][[1]][1], bySupp[2][[1]][1],
+       alternative = "two.sided", paired = FALSE, var.equal = TRUE)
 ```
 
-We have sufficient evidence to reject the null hypothesis (p < 0.001) that there is no difference in tooth growth length between the vitamin C and ascorbic acid supplementation methods. We are also 95% confident that the true mean difference between these two groups is between 20.66 and 10.61.
+We do not have sufficient evidence to reject the null hypothesis (p > 0.05) that there is no difference in tooth growth length between the vitamin C and ascorbic acid supplementation methods. Also, the 95% confidence interval includes 0.
