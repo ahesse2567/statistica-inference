@@ -1,8 +1,9 @@
 ---
-title: "Untitled"
+title: "Basic Tooth Growth Inference"
 author: "Anton Hesse"
 date: "9/10/2020"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
