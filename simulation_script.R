@@ -19,6 +19,7 @@ truVar <- truSD^2
 meanNorm <- rnorm(1000, mean = 5, sd = 5)
 
 
+
 ggplot(data = as.data.frame(meanNorm)) +
     geom_histogram(aes(x=meanNorm))
 
@@ -38,7 +39,14 @@ varDist <- ggplot(data = as.data.frame(vars)) +
 varDist
 
 
+meanDist <- ggplot(data = as.data.frame(means)) +
+    geom_histogram(aes(x = means)) +
+    geom_vline(xintercept = truMean, color = "red")
+meanDist
 
+x <- seq(min(means), max(means), length = nSims)
+hist(means, probability = T)
+lines(x, dnorm(x, truMean, sd = truSD/sqrt(N)), type = "l")
 
 #### Tooth Growth
 
@@ -99,3 +107,4 @@ t.test(bySupp[1][[1]][1], bySupp[2][[1]][1],
 
 
 t.test(len ~ supp, data = ToothGrowth, var.equal = TRUE, paired = FALSE)
+
